@@ -295,6 +295,14 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 {
     NSString* source = (NSString*)[command argumentAtIndex:0];
     NSString* server = [command argumentAtIndex:1];
+    
+    if ([source rangeOfString:@"data:image/jpeg;base64,"].location != NSNotFound) {
+        source = [source stringByReplacingOccurrencesOfString:@"data:image/jpeg;base64," withString:@""];
+        NSData *fileData = [NSData cdv_dataFromBase64String:source];
+        [self uploadData:fileData command:command];
+        return;
+    }
+
     NSError* __autoreleasing err = nil;
 
     CDVFilesystemURL *sourceURL = [CDVFilesystemURL fileSystemURLWithString:source];
